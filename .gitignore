@@ -1,0 +1,15 @@
+# Lokale Terraform-Ordner (enthalten hunderte MB an Plugins)
+**/.terraform/*
+
+# Die kritischen State-Files (enthalten sensible Daten)
+*.tfstate
+*.tfstate.*
+
+# Variablen-Dateien (enthalten oft Passwörter)
+*.tfvars
+*.tfvars.json
+
+# Ausführungspläne und Crash-Logs
+*tfplan*
+crash.log
+crash.*.log
