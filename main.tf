@@ -9,36 +9,14 @@ module "vpc" {
   environment  = "dev"
 }
 
-# --- Phase 1 PoC: EC2 Test-Server ---
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023.*-x86_64"]
-  }
-}
-
-resource "aws_instance" "mein_server" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t2.micro"
-
-  # Integration in das neue VPC
-  subnet_id                   = module.vpc.public_subnet_ids[0]
-  vpc_security_group_ids      = [module.vpc.sg_loadbalancer_id]
-  associate_public_ip_address = true
-
-  tags = {
-    Name = "MeinKostenloserServer"
-  }
-}
+# --- Phase 3: S3 Storage (AES-verschlüsselt) ---
 module "storage" {
   source       = "./modules/storage"
   project_name = "company-portal"
   environment  = "dev"
 }
 
+# --- Phase 3: RDS PostgreSQL (AES-verschlüsselt im privaten Subnetz) ---
 module "database" {
   source                 = "./modules/database"
   project_name           = "company-portal"
@@ -50,4 +28,11 @@ module "database" {
 
   db_username            = "postgresadmin"
   db_password            = "SuperSecretPassword123!"
+}
+
+# --- Phase 4: ECR (Elastic Container Registry) ---
+module "ecr" {
+  source       = "./modules/ecr"
+  project_name = "company-portal"
+  environment  = "dev"
 }
