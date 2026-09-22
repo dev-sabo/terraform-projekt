@@ -33,3 +33,21 @@ resource "aws_instance" "mein_server" {
     Name = "MeinKostenloserServer"
   }
 }
+module "storage" {
+  source       = "./modules/storage"
+  project_name = "company-portal"
+  environment  = "dev"
+}
+
+module "database" {
+  source                 = "./modules/database"
+  project_name           = "company-portal"
+  environment            = "dev"
+
+  # Verknüpfung mit Phase 2 (VPC)
+  private_subnet_ids     = module.vpc.private_subnet_ids
+  vpc_security_group_ids = [module.vpc.sg_database_id]
+
+  db_username            = "postgresadmin"
+  db_password            = "SuperSecretPassword123!"
+}
