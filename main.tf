@@ -36,3 +36,15 @@ module "ecr" {
   project_name = "company-portal"
   environment  = "dev"
 }
+
+# --- Phase 4: ECS (Elastic Container Service & Fargate Cluster) ---
+module "ecs" {
+  source                 = "./modules/ecs"
+  project_name           = "company-portal"
+  environment            = "dev"
+
+  # Verknüpfung mit VPC und ECR
+  private_subnet_ids     = module.vpc.private_subnet_ids
+  ecs_security_group_ids = [module.vpc.sg_backend_id]
+  ecr_repository_url     = module.ecr.repository_url
+}
